@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Employee Satisfaction Questionnaire</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#1a365d;--blue2:#2b6cb0;--blue3:#ebf8ff;--blue4:#bee3f8;
+  --green:#276749;--green2:#c6f6d5;--green3:#f0fff4;
+  --red:#c53030;--red2:#fed7d7;--red3:#fff5f5;
+  --yellow:#b7791f;--yellow2:#fefcbf;
+  --gray:#4a5568;--gray2:#718096;--gray3:#e2e8f0;--gray4:#f7fafc;
+  --radius:10px;--shadow:0 2px 10px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f4f8;color:#1a202c;min-height:100vh;}
+
+/* ── NAV ── */
+.topbar{background:var(--blue);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;position:sticky;top:0;z-index:100;}
+.topbar .brand{color:#fff;font-weight:700;font-size:.95rem;line-height:1.2;}
+.topbar .brand small{display:block;font-weight:400;font-size:.7rem;opacity:.75;}
+.topbar .admin-link{color:#90cdf4;font-size:.78rem;font-weight:600;cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid rgba(144,205,244,.3);transition:all .2s;}
+.topbar .admin-link:hover{background:rgba(144,205,244,.15);}
+
+/* ── VIEWS ── */
+.view{display:none;} .view.active{display:block;}
+.container{max-width:680px;margin:0 auto;padding:20px 16px 70px;}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:14px;}
+.card h2{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue2);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--blue3);}
+
+/* ── FIELDS ── */
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:.8rem;font-weight:600;color:var(--gray);margin-bottom:4px;}
+.field select,.field input[type=text],.field input[type=password]{width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:.9rem;color:#2d3748;background:#fafafa;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+.field select:focus,.field input:focus{border-color:var(--blue2);background:#fff;}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5568' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:480px){.row2{grid-template-columns:1fr;}}
+
+/* ── PROGRESS ── */
+.prog-wrap{height:4px;background:var(--gray3);border-radius:4px;margin:12px 0 16px;overflow:hidden;}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue2));border-radius:4px;transition:width .3s;}
+
+/* ── QUESTIONS ── */
+.section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray2);margin:18px 0 10px;}
+.question{border:1.5px solid var(--gray3);border-radius:9px;padding:13px;margin-bottom:11px;transition:border-color .2s;}
+.question.answered{border-color:var(--green2);background:var(--green3);}
+.q-en{font-size:.88rem;font-weight:600;color:#2d3748;line-height:1.4;margin-bottom:3px;}
+.q-es{font-size:.77rem;color:var(--gray2);font-style:italic;margin-bottom:10px;}
+.rating-row{display:flex;gap:5px;}
+.rating-row label{flex:1;min-width:40px;cursor:pointer;}
+.rating-row input[type=radio]{display:none;}
+.rbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1.5px solid var(--gray3);border-radius:7px;padding:7px 3px 5px;background:#fff;cursor:pointer;transition:all .15s;}
+.rbtn .n{font-size:1rem;font-weight:700;color:var(--gray);line-height:1;}
+.rbtn .l{font-size:.55rem;color:#a0aec0;margin-top:2px;text-align:center;line-height:1.1;}
+.rating-row label:nth-child(1) input:checked+.rbtn{border-color:#fc8181;background:var(--red3);}
+.rating-row label:nth-child(1) input:checked+.rbtn .n{color:var(--red);}
+.rating-row label:nth-child(2) input:checked+.rbtn{border-color:#f6ad55;background:#fffaf0;}
+.rating-row label:nth-child(2) input:checked+.rbtn .n{color:#c05621;}
+.rating-row label:nth-child(3) input:checked+.rbtn{border-color:#f6e05e;background:var(--yellow2);}
+.rating-row label:nth-child(3) input:checked+.rbtn .n{color:var(--yellow);}
+.rating-row label:nth-child(4) input:checked+.rbtn{border-color:#68d391;background:var(--green3);}
+.rating-row label:nth-child(4) input:checked+.rbtn .n{color:var(--green);}
+.rating-row label:nth-child(5) input:checked+.rbtn{border-color:var(--blue2);background:var(--blue3);}
+.rating-row label:nth-child(5) input:checked+.rbtn .n{color:var(--blue2);}
+.yn-row{display:flex;gap:10px;margin-top:8px;}
+.yn-row input[type=radio]{display:none;}
+.yn-btn{flex:1;padding:10px;text-align:center;border:1.5px solid var(--gray3);border-radius:7px;font-size:.88rem;font-weight:600;color:var(--gray);cursor:pointer;background:#fff;transition:all .15s;}
+.yn-row input[value=Yes]:checked+.yn-btn{border-color:#fc8181;background:var(--red3);color:var(--red);}
+.yn-row input[value=No]:checked+.yn-btn{border-color:#68d391;background:var(--green3);color:var(--green);}
+
+/* ── SUBMIT BTN ── */
+.btn-primary{width:100%;padding:15px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;border-radius:var(--radius);font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.02em;transition:opacity .2s;margin-top:6px;}
+.btn-primary:hover{opacity:.9;}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.anon-note{font-size:.72rem;color:var(--gray2);text-align:center;margin-top:9px;}
+
+/* ── THANK YOU ── */
+#view-thankyou .ty-wrap{max-width:540px;margin:0 auto;padding:40px 16px;}
+.ty-icon{font-size:3.5rem;text-align:center;margin-bottom:16px;}
+.ty-en{font-size:1.4rem;font-weight:800;color:var(--blue);text-align:center;line-height:1.3;margin-bottom:8px;}
+.ty-es{font-size:1.4rem;font-weight:800;color:var(--blue);text-align:center;line-height:1.3;margin-bottom:24px;}
+.ty-msg{background:linear-gradient(135deg,var(--blue3),#f0fff4);border:1.5px solid var(--blue4);border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;text-align:center;}
+.ty-msg p{font-size:.9rem;line-height:1.7;color:#2d3748;margin-bottom:10px;}
+.ty-msg p:last-child{margin-bottom:0;}
+.ty-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+.ty-score-box{text-align:center;padding:12px 6px;border-radius:9px;background:#fff;border:1.5px solid var(--gray3);}
+.ty-score-box .val{font-size:1.4rem;font-weight:800;color:var(--blue2);line-height:1;}
+.ty-score-box .lbl{font-size:.62rem;font-weight:600;text-transform:uppercase;color:var(--gray);margin-top:3px;letter-spacing:.04em;}
+.btn-new{width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.btn-new:hover{opacity:.88;}
+
+/* ── ADMIN LOGIN ── */
+#view-admin-login .login-wrap{max-width:380px;margin:60px auto 0;padding:0 16px;}
+.login-wrap .card{padding:28px;}
+.login-wrap h1{font-size:1.2rem;font-weight:800;color:var(--blue);margin-bottom:4px;}
+.login-wrap p{font-size:.8rem;color:var(--gray2);margin-bottom:20px;}
+.login-err{color:var(--red);font-size:.8rem;margin-top:8px;display:none;}
+
+/* ── ADMIN DASHBOARD ── */
+#view-admin{padding-bottom:60px;}
+.admin-header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:20px 16px 0;}
+.admin-header h1{font-size:1.1rem;font-weight:800;margin-bottom:16px;}
+.admin-tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:0;}
+.admin-tabs::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;padding:9px 14px;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px 8px 0 0;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.tab-btn.active{background:#f0f4f8;}
+.tab-btn.active{color:var(--blue);}
+.admin-content{max-width:780px;margin:0 auto;padding:20px 16px;}
+.tab-panel{display:none;} .tab-panel.active{display:block;}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
+@media(min-width:540px){.stat-grid{grid-template-columns:repeat(4,1fr);}}
+.stat-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;text-align:center;}
+.stat-card .sv{font-size:1.8rem;font-weight:800;line-height:1;color:var(--blue2);}
+.stat-card .sl{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray2);margin-top:4px;}
+.stat-card.warn .sv{color:var(--red);}
+.stat-card.good .sv{color:var(--green);}
+
+/* ── SCORE TABLE ── */
+.score-table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead tr{background:var(--blue);color:#fff;}
+thead th{padding:10px 12px;text-align:left;font-weight:600;font-size:.75rem;white-space:nowrap;}
+tbody tr:nth-child(even){background:var(--gray4);}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--gray3);white-space:nowrap;}
+tbody td:first-child{font-weight:600;}
+.score-pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.75rem;font-weight:700;}
+.score-excellent{background:#c6f6d5;color:#276749;}
+.score-good{background:var(--blue3);color:var(--blue2);}
+.score-fair{background:var(--yellow2);color:#7b5c0a;}
+.score-poor{background:var(--red2);color:var(--red);}
+
+/* ── BAR CHART ── */
+.bar-chart{margin-top:8px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bar-label{width:110px;font-size:.78rem;font-weight:600;color:var(--gray);flex-shrink:0;text-align:right;}
+.bar-track{flex:1;background:var(--gray3);border-radius:4px;height:18px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .6s ease;display:flex;align-items:center;padding-left:6px;}
+.bar-fill span{font-size:.68rem;font-weight:700;color:#fff;}
+
+/* ── QUESTION EDITOR ── */
+.q-edit-item{border:1.5px solid var(--gray3);border-radius:9px;padding:14px;margin-bottom:12px;background:#fff;}
+.q-edit-item .q-num{font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--blue2);margin-bottom:8px;}
+.q-edit-item textarea{width:100%;padding:8px 10px;border:1.5px solid var(--gray3);border-radius:6px;font-size:.83rem;resize:vertical;min-height:52px;font-family:inherit;outline:none;transition:border-color .2s;}
+.q-edit-item textarea:focus{border-color:var(--blue2);}
+.q-edit-item .lang-tag{font-size:.68rem;font-weight:700;color:var(--gray2);margin-bottom:3px;text-transform:uppercase;}
+.btn-save-q{margin-top:14px;padding:11px 24px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.btn-save-q:hover{opacity:.88;}
+.btn-reset-q{margin-top:14px;margin-left:10px;padding:11px 18px;background:#fff;color:var(--gray);border:1.5px solid var(--gray3);border-radius:8px;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-reset-q:hover{border-color:var(--gray);color:var(--blue);}
+.save-toast{display:none;padding:10px 16px;background:var(--green3);border:1.5px solid var(--green2);border-radius:8px;font-size:.82rem;color:var(--green);font-weight:600;margin-top:10px;}
+
+/* ── SETTINGS ── */
+.settings-section{margin-bottom:20px;}
+.settings-section h3{font-size:.82rem;font-weight:700;color:var(--gray);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gray3);}
+.btn-action{display:inline-block;padding:10px 18px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;transition:opacity .2s;margin-right:8px;margin-bottom:8px;}
+.btn-action:hover{opacity:.85;}
+.btn-export{background:var(--green);color:#fff;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-logout{background:var(--gray3);color:var(--gray);}
+.import-area{width:100%;min-height:80px;padding:10px;border:1.5px solid var(--gray3);border-radius:8px;font-size:.78rem;font-family:monospace;resize:vertical;outline:none;}
+.import-area:focus{border-color:var(--blue2);}
+
+.tag{display:inline-block;padding:2px 7px;border-radius:20px;font-size:.68rem;font-weight:700;}
+.tag-loc{background:var(--blue3);color:var(--blue2);}
+.tag-pos{background:var(--green3);color:var(--green);}
+.empty-state{text-align:center;padding:40px 20px;color:var(--gray2);font-size:.88rem;}
+.empty-state .icon{font-size:2.5rem;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">Employee Satisfaction<small>Satisfacción del Empleado</small></div>
+  <span class="admin-link" onclick="goAdmin()">Admin →</span>
+</div>
+
+<!-- ═══════════════════════════════════════ SURVEY VIEW ══ -->
+<div id="view-survey" class="view active">
+<div class="container">
+  <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
+
+  <!-- Identity -->
+  <div class="card">
+    <h2>About You · Sobre Ti</h2>
+    <div class="row2">
+      <div class="field"><label>Location / Ubicación *</label>
+        <select id="f-loc" onchange="upProg()">
+          <option value="">Select…</option>
+          <option>WG</option><option>BV</option><option>CMP</option><option>CPT</option>
+        </select>
+      </div>
+      <div class="field"><label>Position / Puesto *</label>
+        <select id="f-pos" onchange="upProg()">
+          <option value="">Select…</option>
+          <option>Bartender</option><option>Busser</option><option>Cashier</option>
+          <option>Chef</option><option>Dishwasher</option><option>FOH Manager</option>
+          <option>Line Cook</option><option>Prep</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Tenure / Antigüedad</label>
+      <select id="f-ten" onchange="upProg()">
+        <option value="">Select…</option>
+        <option value="0-90d">0 – 90 days</option>
+        <option value="3-12m">3 – 12 months</option>
+        <option value="1+yr">1+ year</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Questions -->
+  <div class="card">
+    <h2>Rate Each Statement 1–5 · Califica del 1 al 5</h2>
+    <p style="font-size:.74rem;color:var(--gray2);margin-bottom:14px;">1 = Strongly Disagree &nbsp;·&nbsp; 5 = Strongly Agree</p>
+    <div id="questions-container"></div>
+  </div>
+
+  <!-- Suggestion Box -->
+  <div class="card">
+    <h2>Suggestions · Sugerencias</h2>
+    <div class="field">
+      <label>Any suggestions or comments? (optional) · ¿Alguna sugerencia o comentario? (opcional)</label>
+      <textarea id="f-suggestion" rows="4" placeholder="Share any thoughts, ideas, or feedback… / Comparte ideas, pensamientos o comentarios…" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:.88rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .2s;background:#fafafa;" onfocus="this.style.borderColor='var(--blue2)';this.style.background='#fff'" onblur="this.style.borderColor='var(--gray3)';this.style.background='#fafafa'"></textarea>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:6px;">
+    <button class="btn-primary" id="submitBtn" onclick="submitSurvey()" disabled style="flex:1;">Submit / Enviar</button>
+    <button onclick="resetSurvey()" style="padding:15px 18px;background:#fff;color:var(--gray);border:1.5px solid var(--gray3);border-radius:var(--radius);font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;" onmouseover="this.style.borderColor='var(--gray)'" onmouseout="this.style.borderColor='var(--gray3)'">Clear All</button>
+  </div>
+  <p class="anon-note">Responses are confidential · Las respuestas son confidenciales</p>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ THANK YOU VIEW ══ -->
+<div id="view-thankyou" class="view">
+<div class="ty-wrap">
+  <div class="ty-icon">🌟</div>
+  <div class="ty-en">Thank You for Your Feedback!</div>
+  <div class="ty-es">¡Gracias por Compartir Tu Opinión!</div>
+
+  <div class="ty-msg">
+    <p>We truly appreciate you taking the time to complete this survey. Your honesty helps us build a better workplace for everyone on the team.</p>
+    <p>We also want to recognize your hard work and dedication every day — it doesn't go unnoticed.</p>
+    <p>Valoramos tu tiempo y honestidad. Tu opinión nos ayuda a mejorar el ambiente de trabajo para todo el equipo. ¡Tu esfuerzo y dedicación diaria son muy apreciados!</p>
+  </div>
+
+  <button class="btn-new" onclick="resetSurvey()">New Response / Nueva Respuesta</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ ADMIN LOGIN VIEW ══ -->
+<div id="view-admin-login" class="view">
+<div class="login-wrap">
+  <div class="card">
+    <h1>🔒 Admin Access</h1>
+    <p>Enter password to access the dashboard.</p>
+    <div class="field"><label>Password</label>
+      <input type="password" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Unlock Dashboard</button>
+    <div class="login-err" id="login-err">Incorrect password. Try again.</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ ADMIN DASHBOARD VIEW ══ -->
+<div id="view-admin" class="view">
+  <div class="admin-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <h1 style="margin-bottom:0;">📊 Admin Dashboard</h1>
+      <span onclick="showView('view-survey')" style="color:#90cdf4;font-size:.78rem;font-weight:600;cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid rgba(144,205,244,.3);">← Survey</span>
+    </div>
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+      <button class="tab-btn" onclick="showTab('by-location')">By Location</button>
+      <button class="tab-btn" onclick="showTab('by-position')">By Position</button>
+      <button class="tab-btn" onclick="showTab('questions')">Edit Questions</button>
+      <button class="tab-btn" onclick="showTab('suggestions')">Suggestions</button>
+      <button class="tab-btn" onclick="showTab('settings')">Settings</button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+
+    <!-- OVERVIEW TAB -->
+    <div class="tab-panel active" id="tab-overview">
+      <div id="overview-content"></div>
+    </div>
+
+    <!-- BY LOCATION TAB -->
+    <div class="tab-panel" id="tab-by-location">
+      <div class="card"><h2>Scores by Location</h2>
+        <div id="location-content"></div>
+      </div>
+      <div class="card" style="margin-top:14px;"><h2>Overall Score by Location</h2>
+        <div class="bar-chart" id="loc-bar-chart"></div>
+      </div>
+    </div>
+
+    <!-- BY POSITION TAB -->
+    <div class="tab-panel" id="tab-by-position">
+      <div class="card"><h2>Scores by Position</h2>
+        <div id="position-content"></div>
+      </div>
+      <div class="card" style="margin-top:14px;"><h2>Overall Score by Position</h2>
+        <div class="bar-chart" id="pos-bar-chart"></div>
+      </div>
+    </div>
+
+    <!-- QUESTIONS TAB -->
+    <div class="tab-panel" id="tab-questions">
+      <div class="card">
+        <h2>Edit Questions</h2>
+        <p style="font-size:.78rem;color:var(--gray2);margin-bottom:16px;">Changes apply to new surveys immediately. Old responses are not affected.</p>
+        <div id="q-editor"></div>
+        <div>
+          <button class="btn-save-q" onclick="saveQuestions()">Save Changes</button>
+          <button class="btn-reset-q" onclick="resetQuestions()">Reset to Defaults</button>
+        </div>
+        <div class="save-toast" id="save-toast">✓ Questions saved successfully!</div>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS TAB -->
+    <div class="tab-panel" id="tab-suggestions">
+      <div class="card"><h2>Employee Suggestions</h2>
+        <div id="suggestions-content"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="card">
+        <h2>Settings</h2>
+
+        <div class="settings-section">
+          <h3>Change Admin Password</h3>
+          <div class="row2" style="max-width:400px;">
+            <div class="field"><label>New Password</label>
+              <input type="password" id="new-pw" placeholder="New password"/>
+            </div>
+            <div class="field"><label>Confirm Password</label>
+              <input type="password" id="new-pw2" placeholder="Confirm"/>
+            </div>
+          </div>
+          <button class="btn-action btn-export" onclick="changePw()">Update Password</button>
+          <div id="pw-msg" style="font-size:.8rem;margin-top:6px;display:none;"></div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Export Data</h3>
+          <p style="font-size:.78rem;color:var(--gray2);margin-bottom:10px;">Download all responses as CSV — paste into your Excel tracker.</p>
+          <button class="btn-action btn-export" onclick="exportCSV()">⬇ Export All Responses (CSV)</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>Import CSV Data</h3>
+          <p style="font-size:.78rem;color:var(--gray2);margin-bottom:8px;">Paste CSV rows (no header) collected from other devices to merge into this dashboard.</p>
+          <textarea class="import-area" id="import-area" placeholder="Paste CSV rows here…"></textarea>
+          <br/><button class="btn-action btn-export" style="margin-top:8px;" onclick="importCSV()">Import Rows</button>
+          <div id="import-msg" style="font-size:.8rem;margin-top:6px;display:none;"></div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Danger Zone</h3>
+          <button class="btn-action btn-danger" onclick="clearData()">🗑 Clear All Response Data</button>
+          <button class="btn-action btn-logout" onclick="logout()">🔒 Lock Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /admin-content -->
+</div>
+
+<script>
+// ─── DEFAULT QUESTIONS ───────────────────────────────────────────────────────
+const DEFAULT_QS = [
+  {en:"I enjoy working at this company.",es:"Disfruto trabajar en esta empresa.",section:"overall"},
+  {en:"I feel respected at work.",es:"Me siento respetado(a) en el trabajo.",section:"overall"},
+  {en:"I feel supported by my direct manager.",es:"Me siento apoyado(a) por mi gerente directo.",section:"overall"},
+  {en:"Communication from leadership is clear and consistent.",es:"La comunicación del liderazgo es clara y constante.",section:"overall"},
+  {en:"My workload is manageable.",es:"Mi carga de trabajo es manejable.",section:"overall"},
+  {en:"Scheduling is fair and predictable.",es:"El horario es justo y predecible.",section:"overall"},
+  {en:"I understand what is expected of me in my role.",es:"Entiendo lo que se espera de mí en mi puesto.",section:"overall"},
+  {en:"I see opportunities for growth here.",es:"Veo oportunidades de crecimiento aquí.",section:"overall"},
+  {en:"I feel my contributions are recognized.",es:"Siento que reconocen mis contribuciones.",section:"overall"},
+  {en:"I would recommend this company as a good place to work.",es:"Recomendaría esta empresa como un buen lugar para trabajar.",section:"overall"},
+  {en:"My manager addresses issues fairly.",es:"Mi gerente maneja los problemas de manera justa.",section:"leadership"},
+  {en:"My manager listens to feedback.",es:"Mi gerente escucha la retroalimentación.",section:"leadership"},
+  {en:"I feel comfortable bringing up concerns.",es:"Me siento cómodo(a) expresando inquietudes.",section:"leadership"},
+  {en:"Team morale at my location is positive.",es:"El ambiente del equipo en mi ubicación es positivo.",section:"leadership"},
+  {en:"Conflict is handled professionally here.",es:"Los conflictos se manejan de manera profesional aquí.",section:"leadership"},
+  {en:"Likelihood to still be here in 6 months.",es:"Probabilidad de seguir aquí en 6 meses.",section:"retention"},
+  {en:"If offered slightly better pay, would you leave?",es:"Si le ofrecieran un poco más de sueldo, ¿se iría?",section:"retention"},
+];
+const LOCATIONS = ["WG","BV","CMP","CPT"];
+const POSITIONS  = ["Bartender","Busser","Cashier","Chef","Dishwasher","FOH Manager","Line Cook","Prep"];
+const LS_RESPONSES = "esq_responses";
+const LS_PASSWORD  = "esq_password";
+const LS_QUESTIONS = "esq_questions";
+const DEFAULT_PW   = "admin123";
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const get = k  => { try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } };
+const set = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+function getQuestions(){ return get(LS_QUESTIONS) || DEFAULT_QS; }
+function getResponses(){ return get(LS_RESPONSES) || []; }
+function getPW(){ return localStorage.getItem(LS_PASSWORD) || DEFAULT_PW; }
+function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); $(id).classList.add('active'); window.scrollTo(0,0); }
+function avg(arr){ const n=arr.filter(v=>v!=null&&v!=='');return n.length?n.reduce((a,b)=>a+Number(b),0)/n.length:null; }
+function fmt(v){ return v==null?'—':(+v).toFixed(2); }
+function scorePill(v){
+  if(v==null)return '<span style="color:#aaa">—</span>';
+  const n=+v;
+  const cls=n>=4.5?'score-excellent':n>=3.5?'score-good':n>=2.5?'score-fair':'score-poor';
+  return `<span class="score-pill ${cls}">${n.toFixed(2)}</span>`;
+}
+function barColor(v){ const n=+v;return n>=4.5?'#48bb78':n>=3.5?'#4299e1':n>=2.5?'#ecc94b':'#fc8181'; }
+function todayStr(){ return new Date().toLocaleDateString('en-US'); }
+
+// ─── QUESTION RENDERING ──────────────────────────────────────────────────────
+function renderRatingRow(qNum, labels){
+  const pairs = [
+    {n:'1',l:labels?.[0]||'Strongly<br>Disagree'},
+    {n:'2',l:labels?.[1]||'Disagree'},
+    {n:'3',l:labels?.[2]||'Neutral'},
+    {n:'4',l:labels?.[3]||'Agree'},
+    {n:'5',l:labels?.[4]||'Strongly<br>Agree'},
+  ];
+  return `<div class="rating-row" id="q${qNum}">` +
+    pairs.map(p=>`<label><input type="radio" name="q${qNum}" value="${p.n}" onchange="rateQ(${qNum})"><div class="rbtn"><span class="n">${p.n}</span><span class="l">${p.l}</span></div></label>`).join('') +
+  `</div>`;
+}
+function buildSurveyQuestions(){
+  const qs = getQuestions();
+  let html = '';
+  let lastSection = '';
+  qs.slice(0,15).forEach((q,i)=>{
+    const num = i+1;
+    if(q.section !== lastSection){
+      const label = q.section==='overall'?'Overall Experience · Experiencia General':'Leadership · Liderazgo';
+      html += `<div class="section-label">${label}</div>`;
+      lastSection = q.section;
+    }
+    html += `<div class="question" id="qw${num}">
+      <div class="q-en">${q.en}</div>
+      <div class="q-es">${q.es}</div>
+      ${renderRatingRow(num)}
+    </div>`;
+  });
+  // Q16 & Q17 – Retention (text pulled from editable array)
+  const q16 = qs[15] || {en:"Likelihood to still be here in 6 months.",es:"Probabilidad de seguir aquí en 6 meses."};
+  const q17 = qs[16] || {en:"If offered slightly better pay, would you leave?",es:"Si le ofrecieran un poco más de sueldo, ¿se iría?"};
+  html += `<div class="section-label">Retention · Retención</div>
+  <div class="question" id="qw16">
+    <div class="q-en">${q16.en}</div>
+    <div class="q-es">${q16.es}</div>
+    ${renderRatingRow(16,['Very<br>Unlikely','Unlikely','Neutral','Likely','Very<br>Likely'])}
+  </div>
+  <div class="question" id="qw17">
+    <div class="q-en">${q17.en}</div>
+    <div class="q-es">${q17.es}</div>
+    <div class="yn-row" id="q17">
+      <label><input type="radio" name="q17" value="Yes" onchange="rateQ(17)"><div class="yn-btn">Yes / Sí</div></label>
+      <label><input type="radio" name="q17" value="No" onchange="rateQ(17)"><div class="yn-btn">No</div></label>
+    </div>
+  </div>`;
+  $('questions-container').innerHTML = html;
+}
+
+// ─── SURVEY LOGIC ────────────────────────────────────────────────────────────
+function getRadio(name){ const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:null; }
+function rateQ(n){ const w=$(`qw${n}`);if(w)w.classList.add('answered');upProg(); }
+function upProg(){
+  const required = ['f-loc','f-pos'];
+  let done = required.filter(id=>$(id)&&$(id).value).length;
+  for(let i=1;i<=17;i++){ if(getRadio(`q${i}`))done++; }
+  const total = 2+17;
+  $('progBar').style.width = Math.round(done/total*100)+'%';
+  $('submitBtn').disabled = done < total;
+}
+function submitSurvey(){
+  const qs = getQuestions();
+  const date = todayStr();
+  const loc  = $('f-loc').value;
+  const pos  = $('f-pos').value;
+  const ten  = $('f-ten').value||'';
+  const name = '';
+  const suggestion = $('f-suggestion').value.trim();
+  const qvals = {};
+  for(let i=1;i<=17;i++) qvals[i]=getRadio(`q${i}`);
+
+  const overallNums = [1,2,3,4,5,6,7,8,9,10].map(i=>Number(qvals[i]));
+  const leaderNums  = [11,12,13,14,15].map(i=>Number(qvals[i]));
+  const overallScore = avg(overallNums);
+  const leaderScore  = avg(leaderNums);
+  const retScore     = Number(qvals[16]);
+
+  const record = { date, loc, pos, ten, name, suggestion,
+    q:Object.fromEntries(Object.entries(qvals).map(([k,v])=>[k,v])),
+    overallScore, leaderScore, retentionScore: retScore };
+
+  const responses = getResponses();
+  responses.push(record);
+  set(LS_RESPONSES, responses);
+
+
+  showView('view-thankyou');
+}
+function resetSurvey(){
+  $('f-loc').value=''; $('f-pos').value=''; $('f-ten').value=''; $('f-suggestion').value='';
+  for(let i=1;i<=17;i++){
+    const c=document.querySelector(`input[name="q${i}"]:checked`);if(c)c.checked=false;
+    const w=$(`qw${i}`);if(w)w.classList.remove('answered');
+  }
+  $('progBar').style.width='0%';
+  $('submitBtn').disabled=true;
+  buildSurveyQuestions();
+  showView('view-survey');
+}
+
+// ─── ADMIN NAVIGATION ────────────────────────────────────────────────────────
+function goAdmin(){ showView('view-admin-login'); $('pw-input').value=''; $('login-err').style.display='none'; }
+function doLogin(){
+  const v=$('pw-input').value;
+  if(v===getPW()){ buildAdmin(); showView('view-admin'); }
+  else{ $('login-err').style.display='block'; $('pw-input').value=''; }
+}
+function logout(){ showView('view-admin-login'); }
+
+function showTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  $(`tab-${name}`).classList.add('active');
+}
+
+// ─── ADMIN BUILDER ───────────────────────────────────────────────────────────
+function buildAdmin(){
+  buildOverview();
+  buildLocationTab();
+  buildPositionTab();
+  buildSuggestions();
+  buildQEditor();
+}
+
+function computeGroup(responses, key, values){
+  return values.map(val=>{
+    const r = responses.filter(x=>x[key]===val);
+    if(!r.length) return { val, count:0, overall:null, leader:null, retention:null, highRisk:0 };
+    const overall    = avg(r.map(x=>x.overallScore));
+    const leader     = avg(r.map(x=>x.leaderScore));
+    const retention  = avg(r.map(x=>x.retentionScore));
+    const highRisk   = r.filter(x=>x.retentionScore<=2).length;
+    return { val, count:r.length, overall, leader, retention, highRisk, highRiskPct: Math.round(highRisk/r.length*100) };
+  }).filter(x=>x.count>0);
+}
+
+function buildOverview(){
+  const r = getResponses();
+  if(!r.length){
+    $('overview-content').innerHTML = `<div class="empty-state"><div class="icon">📋</div>No responses yet. Surveys submitted will appear here.</div>`;
+    return;
+  }
+  const overall   = avg(r.map(x=>x.overallScore));
+  const leader    = avg(r.map(x=>x.leaderScore));
+  const retention = avg(r.map(x=>x.retentionScore));
+  const highRisk  = r.filter(x=>x.retentionScore<=2).length;
+  $('overview-content').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="sv">${r.length}</div><div class="sl">Total Responses</div></div>
+      <div class="stat-card ${overall>=4?'good':''}"><div class="sv">${fmt(overall)}</div><div class="sl">Overall Score</div></div>
+      <div class="stat-card ${leader>=4?'good':''}"><div class="sv">${fmt(leader)}</div><div class="sl">Leadership Score</div></div>
+      <div class="stat-card ${highRisk>0?'warn':'good'}"><div class="sv">${highRisk}</div><div class="sl">High Turnover Risk</div></div>
+    </div>
+    <div class="card">
+      <h2>Company Snapshot</h2>
+      <table>
+        <thead><tr><th>Metric</th><th>Score</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Overall Satisfaction (Q1–10)</td><td>${scorePill(overall)}</td><td>${overall>=4?'✅ Strong':'⚠️ Review needed'}</td></tr>
+          <tr><td>Leadership Score (Q11–15)</td><td>${scorePill(leader)}</td><td>${leader>=4?'✅ Strong':'⚠️ Review needed'}</td></tr>
+          <tr><td>Avg Retention Likelihood</td><td>${scorePill(retention)}</td><td>${retention>=4?'✅ Stable':'⚠️ At-risk'}</td></tr>
+          <tr><td>High Turnover Risk Employees</td><td><strong>${highRisk} / ${r.length}</strong></td><td>${highRisk===0?'✅ None flagged':'🔴 Follow up'}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Recent Responses</h2>
+      <div class="score-table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Location</th><th>Position</th><th>Employee</th><th>Overall</th><th>Leadership</th><th>Retention</th></tr></thead>
+        <tbody>${r.slice(-10).reverse().map(x=>`
+          <tr>
+            <td>${x.date}</td>
+            <td><span class="tag tag-loc">${x.loc}</span></td>
+            <td><span class="tag tag-pos">${x.pos}</span></td>
+            <td>${x.name||'—'}</td>
+            <td>${scorePill(x.overallScore)}</td>
+            <td>${scorePill(x.leaderScore)}</td>
+            <td>${x.retentionScore<=2?'<span class="score-pill score-poor">'+x.retentionScore+'/5</span>':'<span class="score-pill score-good">'+x.retentionScore+'/5</span>'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      </div>
+    </div>`;
+}
+
+function buildLocationTab(){
+  const r = getResponses();
+  const groups = computeGroup(r,'loc',LOCATIONS);
+  if(!groups.length){
+    $('location-content').innerHTML = '<div class="empty-state"><div class="icon">📍</div>No data yet.</div>';
+    $('loc-bar-chart').innerHTML = '';
+    return;
+  }
+  $('location-content').innerHTML = `<div class="score-table-wrap"><table>
+    <thead><tr><th>Location</th><th>Responses</th><th>Overall</th><th>Leadership</th><th>Avg Retention</th><th>High Risk %</th></tr></thead>
+    <tbody>${groups.map(g=>`<tr>
+      <td><strong>${g.val}</strong></td><td>${g.count}</td>
+      <td>${scorePill(g.overall)}</td><td>${scorePill(g.leader)}</td>
+      <td>${scorePill(g.retention)}</td>
+      <td>${g.count>0?`<span class="score-pill ${g.highRiskPct>30?'score-poor':'score-good'}">${g.highRiskPct}%</span>`:'—'}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+
+  $('loc-bar-chart').innerHTML = groups.map(g=>{
+    const pct = g.overall ? Math.round(g.overall/5*100):0;
+    return `<div class="bar-row">
+      <div class="bar-label">${g.val}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor(g.overall)}"><span>${g.overall?g.overall.toFixed(2):''}</span></div></div>
+    </div>`;
+  }).join('');
+}
+
+function buildPositionTab(){
+  const r = getResponses();
+  const groups = computeGroup(r,'pos',POSITIONS);
+  if(!groups.length){
+    $('position-content').innerHTML = '<div class="empty-state"><div class="icon">👤</div>No data yet.</div>';
+    $('pos-bar-chart').innerHTML = '';
+    return;
+  }
+  $('position-content').innerHTML = `<div class="score-table-wrap"><table>
+    <thead><tr><th>Position</th><th>Responses</th><th>Overall</th><th>Leadership</th><th>Avg Retention</th><th>High Risk %</th></tr></thead>
+    <tbody>${groups.map(g=>`<tr>
+      <td><strong>${g.val}</strong></td><td>${g.count}</td>
+      <td>${scorePill(g.overall)}</td><td>${scorePill(g.leader)}</td>
+      <td>${scorePill(g.retention)}</td>
+      <td>${g.count>0?`<span class="score-pill ${g.highRiskPct>30?'score-poor':'score-good'}">${g.highRiskPct}%</span>`:'—'}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+
+  $('pos-bar-chart').innerHTML = groups.map(g=>{
+    const pct = g.overall ? Math.round(g.overall/5*100):0;
+    return `<div class="bar-row">
+      <div class="bar-label">${g.val}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor(g.overall)}"><span>${g.overall?g.overall.toFixed(2):''}</span></div></div>
+    </div>`;
+  }).join('');
+}
+
+function buildSuggestions(){
+  const r = getResponses().filter(x=>x.suggestion && x.suggestion.trim());
+  if(!r.length){
+    $('suggestions-content').innerHTML = '<div class="empty-state"><div class="icon">💬</div>No suggestions submitted yet.</div>';
+    return;
+  }
+  $('suggestions-content').innerHTML = r.slice().reverse().map(x=>`
+    <div style="border:1.5px solid var(--gray3);border-radius:9px;padding:14px;margin-bottom:12px;background:#fafafa;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <span class="tag tag-loc">${x.loc}</span>
+        <span class="tag tag-pos">${x.pos}</span>
+        <span style="font-size:.72rem;color:var(--gray2);margin-left:auto;">${x.date}</span>
+      </div>
+      <p style="font-size:.88rem;color:#2d3748;line-height:1.6;">${x.suggestion}</p>
+    </div>`).join('');
+}
+
+function buildQEditor(){
+  const qs = getQuestions();
+  $('q-editor').innerHTML = qs.map((q,i)=>`
+    <div class="q-edit-item">
+      <div class="q-num">Question ${i+1} — ${q.section==='overall'?'Overall Experience':q.section==='leadership'?'Leadership':'Retention'}</div>
+      <div class="lang-tag">English</div>
+      <textarea id="qen${i}" rows="2">${q.en}</textarea>
+      <div class="lang-tag" style="margin-top:8px;">Español</div>
+      <textarea id="qes${i}" rows="2">${q.es}</textarea>
+    </div>`).join('');
+}
+
+// ─── QUESTIONS SAVE/RESET ────────────────────────────────────────────────────
+function saveQuestions(){
+  const qs = getQuestions();
+  const updated = qs.map((q,i)=>({...q, en:$(`qen${i}`).value.trim()||q.en, es:$(`qes${i}`).value.trim()||q.es}));
+  set(LS_QUESTIONS, updated);
+  buildSurveyQuestions();
+  const t=$('save-toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',2500);
+}
+function resetQuestions(){
+  if(!confirm('Reset all questions to defaults?')) return;
+  localStorage.removeItem(LS_QUESTIONS);
+  buildQEditor();
+  buildSurveyQuestions();
+}
+
+// ─── SETTINGS ────────────────────────────────────────────────────────────────
+function changePw(){
+  const a=$('new-pw').value, b=$('new-pw2').value, m=$('pw-msg');
+  m.style.display='block';
+  if(!a){m.style.color='var(--red)';m.textContent='Enter a password.';return;}
+  if(a!==b){m.style.color='var(--red)';m.textContent='Passwords do not match.';return;}
+  localStorage.setItem(LS_PASSWORD,a);
+  $('new-pw').value=''; $('new-pw2').value='';
+  m.style.color='var(--green)'; m.textContent='✓ Password updated.';
+  setTimeout(()=>m.style.display='none',2500);
+}
+
+function exportCSV(){
+  const r = getResponses();
+  if(!r.length){alert('No responses to export.');return;}
+  const header = 'Date,Location,Position,Tenure,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10,Q11,Q12,Q13,Q14,Q15,Q16-Retention,Q17-WouldLeave,Overall Score,Leadership Score,Retention Score,Employee';
+  const rows = r.map(x=>[
+    x.date, x.loc, x.pos, x.ten,
+    x.q[1],x.q[2],x.q[3],x.q[4],x.q[5],x.q[6],x.q[7],x.q[8],x.q[9],x.q[10],
+    x.q[11],x.q[12],x.q[13],x.q[14],x.q[15],
+    x.q[16],x.q[17],
+    x.overallScore.toFixed(2), x.leaderScore.toFixed(2), x.retentionScore,
+    x.name
+  ].join(','));
+  const csv = header+'\n'+rows.join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`satisfaction_export_${todayStr().replace(/\//g,'-')}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importCSV(){
+  const raw = $('import-area').value.trim();
+  const m=$('import-msg'); m.style.display='block';
+  if(!raw){m.style.color='var(--red)';m.textContent='Paste CSV rows first.';return;}
+  const lines = raw.split('\n').map(l=>l.trim()).filter(l=>l);
+  let added=0, errors=0;
+  const existing = getResponses();
+  lines.forEach(line=>{
+    const cols = line.split(',');
+    if(cols.length<25){errors++;return;}
+    try{
+      const rec = {
+        date:cols[0], loc:cols[1], pos:cols[2], ten:cols[3],
+        q:{1:cols[4],2:cols[5],3:cols[6],4:cols[7],5:cols[8],6:cols[9],7:cols[10],8:cols[11],9:cols[12],10:cols[13],
+           11:cols[14],12:cols[15],13:cols[16],14:cols[17],15:cols[18],16:cols[19],17:cols[20]},
+        overallScore:parseFloat(cols[21]),
+        leaderScore:parseFloat(cols[22]),
+        retentionScore:parseFloat(cols[23]),
+        name:cols[24]||''
+      };
+      existing.push(rec); added++;
+    }catch(e){errors++;}
+  });
+  set(LS_RESPONSES,existing);
+  buildAdmin();
+  m.style.color='var(--green)';
+  m.textContent=`✓ Imported ${added} row(s).${errors?' '+errors+' skipped.':''}`;
+  $('import-area').value='';
+  setTimeout(()=>m.style.display='none',3000);
+}
+
+function clearData(){
+  if(!confirm('Delete ALL response data? This cannot be undone.'))return;
+  localStorage.removeItem(LS_RESPONSES);
+  buildAdmin();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+buildSurveyQuestions();
+</script>
+</body>
+</html>
